@@ -7,6 +7,4 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - laravel-data:/var/www/html
-volumes:
-  laravel-data: 
+      - ./src:/var/www/html 
