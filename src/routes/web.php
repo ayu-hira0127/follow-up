@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 
 // メインページ - パスワードジェネレーター
 Route::get('/', [PasswordController::class, 'index'])->name('home');
+
 Route::post('/', [PasswordController::class, 'generate'])->name('password.generate');
 
 // ユーザー登録

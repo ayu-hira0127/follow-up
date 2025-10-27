@@ -9,7 +9,7 @@
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; }
         input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
-        button { background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%; }
+        button {background:  #2c3e50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%; }
         .error { color: red; font-size: 14px; }
     </style>
 </head>

@@ -14,11 +14,10 @@ class PasswordController extends Controller
     public function index()
     {
         try {
-            // パスワード履歴を取得
-            $passwordHistories = $this->getPasswordHistories();
+            // ログイン時のみパスワード履歴を取得
+            $passwordHistories = Auth::check() ? $this->getPasswordHistories() : collect([]);
             
-
-            return view('home', [
+            return view('password.generator', [
                 'generatedPassword' => '',
                 'length' => 8,
                 'options' => [
@@ -32,7 +31,7 @@ class PasswordController extends Controller
         } catch (\Exception $e) {
             \Log::error('PasswordController index error: ' . $e->getMessage());
             
-            return view('home', [
+            return view('password.generator', [
                 'generatedPassword' => '',
                 'length' => 8,
                 'options' => [
@@ -70,13 +69,15 @@ class PasswordController extends Controller
 
         $generatedPassword = $this->generatePassword($length, $options);
 
-        // パスワード履歴を保存
-        $this->savePasswordHistory($generatedPassword, $length, $options, $request);
+        // ログイン時のみパスワード履歴を保存・取得
+        if (Auth::check()) {
+            $this->savePasswordHistory($generatedPassword, $length, $options, $request);
+            $passwordHistories = $this->getPasswordHistories();
+        } else {
+            $passwordHistories = collect([]);
+        }
 
-        // 履歴を取得
-        $passwordHistories = $this->getPasswordHistories();
-
-        return view('home', [
+        return view('password.generator', [
             'generatedPassword' => $generatedPassword,
             'length' => $length,
             'options' => $options,
@@ -177,21 +178,14 @@ class PasswordController extends Controller
     {
         try {
             if (Auth::check()) {
+                // データベースからログインユーザーの履歴を取得
                 return PasswordHistory::where('user_id', Auth::id())
                     ->orderBy('created_at', 'desc')
                     ->limit(10)
                     ->get();
             } else {
-                $sessionHistories = session()->get('password_history', []);
-                
-                return collect($sessionHistories)->map(function ($history) {
-                    return (object) [
-                        'password' => $history['password'],
-                        'length' => $history['length'],
-                        'options' => $history['options'],
-                        'created_at' => $history['created_at'],
-                    ];
-                });
+                // ログインしていない場合は空のコレクションを返す
+                return collect([]);
             }
         } catch (\Exception $e) {
             \Log::error('Password history retrieval failed: ' . $e->getMessage());
