@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   php-app:
     build: .
@@ -22,6 +20,14 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8082:80
+    environment:
+      - PMA_ARBITRARY=1
       
 volumes:
   mysql_data:

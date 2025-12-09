@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PasswordHistory;
+use App\Models\SavedPassword;
 
 class PasswordController extends Controller
 {
@@ -86,6 +87,143 @@ class PasswordController extends Controller
     }
 
     /**
+     * パスワードを保存（URLと名前と一緒に）
+     */
+    public function save(Request $request)
+    {
+        // ログインチェック
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'パスワードを保存するにはログインが必要です。');
+        }
+
+        // バリデーション
+        $validated = $request->validate([
+            'password' => 'required|string|min:4|max:255',
+            'url' => 'required|url|max:500',
+            'name' => 'required|string|max:255',
+        ]);
+
+        // 保存したパスワードを保存
+        SavedPassword::create([
+            'user_id' => Auth::id(),
+            'password' => $validated['password'],
+            'url' => $validated['url'],
+            'name' => $validated['name']
+        ]);
+
+        return redirect()->route('password.list')->with('success', 'パスワードを保存しました。');
+    }
+
+    /**
+     * 保存したパスワード一覧を表示
+     */
+    public function list()
+    {
+        // ログインチェック
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'パスワード一覧を表示するにはログインが必要です。');
+        }
+
+        // 保存したパスワードを取得
+        $savedPasswords = SavedPassword::where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('password.list', [
+            'savedPasswords' => $savedPasswords
+        ]);
+    }
+
+    /**
+     * パスワード編集フォームを表示
+     */
+    public function edit($id)
+    {
+        // ログインチェック
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'パスワードを編集するにはログインが必要です。');
+        }
+
+        // パスワードを取得（自分のもののみ）
+        $password = SavedPassword::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (!$password) {
+            return redirect()->route('password.list')->with('error', 'パスワードが見つかりません。');
+        }
+
+        return view('password.edit', [
+            'password' => $password
+        ]);
+    }
+
+    /**
+     * パスワード情報を更新
+     */
+    public function update(Request $request, $id)
+    {
+        // ログインチェック
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'パスワードを更新するにはログインが必要です。');
+        }
+
+        // バリデーション
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'url' => 'required|url|max:500',
+            'password' => 'nullable|string|min:4|max:255',
+        ]);
+
+        // パスワードを取得（自分のもののみ）
+        $password = SavedPassword::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (!$password) {
+            return redirect()->route('password.list')->with('error', 'パスワードが見つかりません。');
+        }
+
+        // 更新
+        $password->name = $validated['name'];
+        $password->url = $validated['url'];
+        
+        // パスワードが変更された場合のみ更新
+        if (!empty($validated['password'])) {
+            $password->password = $validated['password'];
+        }
+        
+        $password->save();
+
+        return redirect()->route('password.list')->with('success', 'パスワード情報を更新しました。');
+    }
+
+    /**
+     * パスワードを削除
+     */
+    public function destroy($id)
+    {
+        // ログインチェック
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'パスワードを削除するにはログインが必要です。');
+        }
+
+        // パスワードを取得（自分のもののみ）
+        $password = SavedPassword::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (!$password) {
+            return redirect()->route('password.list')->with('error', 'パスワードが見つかりません。');
+        }
+
+        // 削除
+        $password->delete();
+
+        return redirect()->route('password.list')->with('success', 'パスワードを削除しました。');
+    }
+
+    /**
      * パスワード生成ロジック
      */
     private function generatePassword($length = 8, $options = [])
@@ -155,19 +293,6 @@ class PasswordController extends Controller
                     ->whereNotIn('id', $keepIds)
                     ->delete();
             }
-        } else {
-            $sessionHistories = session()->get('password_history', []);
-            
-            array_unshift($sessionHistories, [
-                'password' => $password,
-                'length' => $length,
-                'options' => $options,
-                'created_at' => now()->toDateTimeString()
-            ]);
-
-            $sessionHistories = array_slice($sessionHistories, 0, 5);
-            
-            session()->put('password_history', $sessionHistories);
         }
     }
 

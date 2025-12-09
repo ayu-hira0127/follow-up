@@ -54,6 +54,40 @@
             <input type="text" class="password-input" id="password" value="{{ $generatedPassword }}" readonly>
             <button type="button" class="copy-btn" onclick="copyToClipboard()">📋 コピー</button>
         </div>
+        
+        {{-- ログイン時のみ、パスワード保存フォームを表示（コピー後に表示） --}}
+        @auth
+        <div id="save-form" class="save-form" style="display: none; margin-top: 20px; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+            <h4>パスワードを保存</h4>
+            <p style="font-size: 14px; color: #666; margin-bottom: 15px;">
+                このパスワードを使用した場所のURLと名前を入力して保存できます。
+            </p>
+            <form method="POST" action="{{ route('password.save') }}">
+                @csrf
+                <input type="hidden" name="password" value="{{ $generatedPassword }}">
+                
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="name" style="display: block; margin-bottom: 5px; font-weight: bold;">名前（必須）:</label>
+                    <input type="text" id="name" name="name" placeholder="例: Gmailアカウント" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    @error('name')
+                        <div class="error" style="color: red; font-size: 12px; margin-top: 5px;">{{ $message }}</div>
+                    @enderror
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="url" style="display: block; margin-bottom: 5px; font-weight: bold;">URL（必須）:</label>
+                    <input type="url" id="url" name="url" placeholder="例: https://mail.google.com" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    @error('url')
+                        <div class="error" style="color: red; font-size: 12px; margin-top: 5px;">{{ $message }}</div>
+                    @enderror
+                </div>
+                
+                <button type="submit" class="save-btn" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">
+                    💾 パスワードを保存
+                </button>
+            </form>
+        </div>
+        @endauth
     </div>
     @endif
     
@@ -112,6 +146,14 @@
         // ボタンの表示を変更
         button.textContent = '✅ コピーしました！';
         button.classList.add('copied');
+        
+        // 保存フォームを表示（ログイン時のみ）
+        const saveForm = document.getElementById('save-form');
+        if (saveForm) {
+            saveForm.style.display = 'block';
+            // スムーズにスクロール
+            saveForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
         
         // 2秒後に元に戻す
         setTimeout(() => {

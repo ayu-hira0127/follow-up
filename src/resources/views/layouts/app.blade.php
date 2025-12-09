@@ -29,10 +29,15 @@
             backdrop-filter: blur(20px);
             border-radius: 20px;
             padding: 40px;
-            max-width: 800px;
+            max-width: 900px;
             width: 100%;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        /* パスワード一覧ページ用にコンテナ幅を広げる */
+        .password-list-page .container {
+            max-width: 1200px;
         }
 
         h1 {
@@ -259,7 +264,6 @@
 
         .auth-nav a, .auth-nav button {
             color: #2c3e50;
-            text-decoration: none;
             font-weight: 600;
             padding: 6px 12px;
             border-radius: 8px;
@@ -274,6 +278,263 @@
             background: #2c3e50;
             color: white;
         }
+
+        /* パスワード一覧ページ用スタイル */
+        .password-list {
+            margin-top: 20px;
+        }
+
+        .password-list table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 4px 12px rgba(44, 62, 80, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid #e2e8f0;
+        }
+
+        .password-list thead {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+        }
+
+        .password-list th {
+            padding: 18px 20px;
+            text-align: left;
+            color: white;
+            font-weight: 600;
+            font-size: 1em;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .password-list th:last-child {
+            text-align: center;
+        }
+
+        .password-list tbody tr {
+            border-bottom: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .password-list tbody tr:hover {
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            transform: translateX(3px);
+        }
+
+        .password-list tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .password-list td {
+            padding: 18px 20px;
+            vertical-align: middle;
+            color: #2d3748;
+        }
+
+        .password-list td strong {
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+
+        .password-list td a {
+            color: #34495e;
+            text-decoration: none;
+            word-break: break-all;
+            transition: all 0.2s ease;
+        }
+
+        .password-list td a:hover {
+            color: #2c3e50;
+            text-decoration: underline;
+        }
+
+        /* 編集ボタンはURLのスタイルを適用しない */
+        .password-list td a.edit-btn {
+            color: white;
+            word-break: normal;
+        }
+
+        .password-list td a.edit-btn:hover {
+            color: white;
+            text-decoration: none;
+        }
+
+        .password-field {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 1em;
+            background: #f7fafc;
+            color: #2d3748;
+            transition: all 0.3s ease;
+        }
+
+        .password-field:focus {
+            outline: none;
+            border-color: #2c3e50;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+        }
+
+        .toggle-password-btn,
+        .copy-password-btn {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .toggle-password-btn {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            color: white;
+        }
+
+        .toggle-password-btn:hover {
+            background: linear-gradient(135deg, #5a6268, #6c757d);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+        }
+
+        .copy-password-btn {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+        }
+
+        .copy-password-btn:hover {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
+        }
+
+        .copy-password-btn.copied {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .edit-btn {
+            display: inline-block;
+            padding: 10px 18px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .edit-btn:hover {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .delete-btn {
+            padding: 10px 18px;
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: linear-gradient(135deg, #c82333, #dc3545);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+
+        .back-link {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-link:hover {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
+        }
+
+        .empty-state {
+            padding: 50px 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 16px;
+            margin-top: 20px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .empty-state p {
+            font-size: 1.2em;
+            color: #718096;
+            margin-bottom: 25px;
+        }
+
+        .empty-state a {
+            display: inline-block;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .empty-state a:hover {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 2px solid;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            border-color: #b8dacc;
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            border-color: #f1b0b7;
+        }
+
+        .password-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .date-info {
+            color: #718096;
+            font-size: 0.95em;
+        }
     </style>
     
     <!-- ページ固有のCSS -->
@@ -286,7 +547,7 @@
             <a href="{{ route('login') }}" class="nav-link">ログイン</a>
             <a href="{{ route('register') }}" class="nav-link">登録</a>
         @else
-            <span class="user-info">{{ auth()->user()->name }}</span>
+        <a href="{{ route('password.list') }}" class="nav-link"><span class="user-info">{{ auth()->user()->name }}</span></a>
             <form method="POST" action="{{ route('logout') }}" class="logout-form">
                 @csrf
                 <button type="submit" class="logout-btn">ログアウト</button>

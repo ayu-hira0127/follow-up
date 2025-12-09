@@ -22,3 +22,11 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Supervisor関連ファイル（自動生成）
+supervisord.pid
+supervisord.log
+
+# その他の自動生成ファイル
+nohup.out
+cookies.txt
