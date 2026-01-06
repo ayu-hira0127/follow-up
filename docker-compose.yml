@@ -1,33 +1,60 @@
 services:
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    container_name: nginx  # コンテナ名
+    ports:
+      - "8080:80"  # ホストの8080番ポートをコンテナの80番ポートにマッピング
+    volumes:
+      - ./src:/var/www/html:ro  # ソースコードを読み取り専用でマウント
+    depends_on:
+      - php-app  # php-appコンテナが起動してから起動する
+    networks:
+      - app-network  # アプリケーションネットワークに接続
+
+  # 実際のアプリケーションロジックを実行するコンテナ
   php-app:
-    build: .
-    container_name: php-app
-    ports:
-      - "8080:80"
+    build: .  # 現在のディレクトリのDockerfileを使用してビルド
+    container_name: php-app  # コンテナ名
     volumes:
-      - ./src:/var/www/html 
+      - ./src:/var/www/html  # ソースコードをマウント
+    networks:
+      - app-network  # アプリケーションネットワークに接続
 
+  # アプリケーションのデータを保存するデータベースサーバー
   mysql:
-    image: mysql:8.0
-    container_name: mysql-db
-    restart: always
+    image: mysql:8.0  # MySQL 8.0の公式イメージを使用
+    container_name: mysql-db  # コンテナ名
+    restart: always  # コンテナが停止した場合、自動的に再起動
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: laravel_db
-      MYSQL_USER: laravel_user
-      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root  # rootユーザーのパスワード
+      MYSQL_DATABASE: laravel_db  # 作成するデータベース名
+      MYSQL_USER: laravel_user  # 作成するユーザー名
+      MYSQL_PASSWORD: password  # ユーザーのパスワード
     ports:
-      - "3307:3306"
+      - "3307:3306"  # ホストの3307番ポートをコンテナの3306番ポートにマッピング
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql  # データベースのデータを永続化
+    networks:
+      - app-network  # アプリケーションネットワークに接続
 
+  # ブラウザからデータベースを管理するためのツール
   phpmyadmin:
-    image: phpmyadmin
-    restart: always
+    image: phpmyadmin  # phpMyAdminの公式イメージを使用
+    restart: always  # コンテナが停止した場合、自動的に再起動
     ports:
-      - 8082:80
+      - 8082:80  # ホストの8082番ポートをコンテナの80番ポートにマッピング
     environment:
-      - PMA_ARBITRARY=1
+      - PMA_ARBITRARY=1  # 任意のMySQLサーバーに接続できるようにする設定
+    networks:
+      - app-network  # アプリケーションネットワークに接続
       
+# データベースのデータを永続化するためのボリューム
 volumes:
-  mysql_data:
+  mysql_data:  # MySQLのデータを保存するボリューム
+
+# コンテナ間で通信するためのネットワーク
+networks:
+  app-network:
+    driver: bridge  # ブリッジネットワーク（同じホスト内のコンテナ間で通信可能）

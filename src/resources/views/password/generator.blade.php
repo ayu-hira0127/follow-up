@@ -26,19 +26,19 @@
             </div>
             <div class="checkbox-group">
                 <div class="checkbox-item">
-                    <input type="checkbox" name="lowercase" {{ ($options['lowercase'] ?? false) ? 'checked' : '' }}>
+                    <input type="checkbox" name="lowercase" value="1" {{ ($options['lowercase'] ?? false) ? 'checked' : '' }}>
                     <span class="checkbox-label">小文字を必ず含める (a-z)</span>
                 </div>
                 <div class="checkbox-item">
-                    <input type="checkbox" name="uppercase" {{ ($options['uppercase'] ?? false) ? 'checked' : '' }}>
+                    <input type="checkbox" name="uppercase" value="1" {{ ($options['uppercase'] ?? false) ? 'checked' : '' }}>
                     <span class="checkbox-label">大文字を必ず含める (A-Z)</span>
                 </div>
                 <div class="checkbox-item">
-                    <input type="checkbox" name="numbers" {{ ($options['numbers'] ?? false) ? 'checked' : '' }}>
+                    <input type="checkbox" name="numbers" value="1" {{ ($options['numbers'] ?? false) ? 'checked' : '' }}>
                     <span class="checkbox-label">数字を必ず含める (0-9)</span>
                 </div>
                 <div class="checkbox-item">
-                    <input type="checkbox" name="symbols" {{ ($options['symbols'] ?? false) ? 'checked' : '' }}>
+                    <input type="checkbox" name="symbols" value="1" {{ ($options['symbols'] ?? false) ? 'checked' : '' }}>
                     <span class="checkbox-label">記号を必ず含める (!@#$%^&*()_+-=[]{}|;:,.<>?)</span>
                 </div>
             </div>

@@ -11,8 +11,8 @@ if [ -d "/var/www/html/bootstrap/cache" ]; then
     chown -R www-data:www-data /var/www/html/bootstrap/cache
 fi
 
-# Supervisorを起動
-exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+# PHP-FPMを起動
+exec php-fpm
 
 
 

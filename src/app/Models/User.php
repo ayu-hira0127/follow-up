@@ -2,47 +2,47 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+// テストデータ生成用の機能
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+// 認証可能なユーザーモデルの基底クラス
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
+/**
+ * アプリケーションにログインするユーザーの情報を管理
+ * パスワードはハッシュ化
+ */
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    // テストデータ生成機能を使用可能にする
+    use HasFactory;
 
     /**
-     * The attributes that are mass assignable.
-     *
+     * 一括代入を許可するフィールド
+     * 
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'name',      // ユーザー名
+        'email',     // メールアドレス
+        'password',  // パスワード（自動的にハッシュ化される）
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
+     * JSONなどに変換する際に、以下のフィールドは含まれない
      * @var list<string>
      */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password',  // パスワード
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
+     * データベースから取得した値を自動的に変換
      * @return array<string, string>
      */
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password' => 'hashed',  // パスワードを自動的にハッシュ化
         ];
     }
 }

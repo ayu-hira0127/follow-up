@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+// LaravelのEloquentモデル（データベース操作の基本クラス）
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+// 暗号化・復号化機能
+use Illuminate\Support\Facades\Crypt;
 
 class PasswordHistory extends Model
 {
@@ -23,30 +25,44 @@ class PasswordHistory extends Model
     ];
 
     /**
-     * ユーザーとのリレーション
+     * パスワードを取得する際に自動的に復号化
      */
-    public function user(): BelongsTo
+    public function getPasswordAttribute($value)
     {
-        return $this->belongsTo(User::class);
+        if (empty($value)) {
+            return $value;
+        }
+
+        try {
+            // 暗号化されている場合は復号化
+            return Crypt::decryptString($value);
+        } catch (\Exception $e) {
+            // 復号化に失敗した場合（既存の平文データなど）はそのまま返す
+            // ログに記録して、次回保存時に暗号化される
+            \Log::warning('Password decryption failed for PasswordHistory ID: ' . $this->id . ' - ' . $e->getMessage());
+            return $value;
+        }
     }
 
     /**
-     * 特定ユーザーの履歴を新しい順で取得
+     * パスワードを設定する際に自動的に暗号化
      */
-    public static function getHistoryForUser($userId = null, $limit = 10)
+    public function setPasswordAttribute($value)
     {
-        return self::where('user_id', $userId)
-                   ->orderBy('created_at', 'desc')
-                   ->limit($limit)
-                   ->get();
+        if (empty($value)) {
+            $this->attributes['password'] = $value;
+            return;
+        }
+
+        // 既に暗号化されているかチェック（二重暗号化を防ぐ）
+        try {
+            Crypt::decryptString($value);
+            // 復号化できた = 既に暗号化されている
+            $this->attributes['password'] = $value;
+        } catch (\Exception $e) {
+            // 復号化できなかった = 平文なので暗号化する
+            $this->attributes['password'] = Crypt::encryptString($value);
+        }
     }
 
-    /**
-     * 匿名ユーザー（セッション）の履歴取得
-     */
-    public static function getAnonymousHistory($sessionId, $limit = 10)
-    {
-        // 匿名ユーザーの場合はセッションで管理
-        return session()->get('password_history', []);
-    }
 }
